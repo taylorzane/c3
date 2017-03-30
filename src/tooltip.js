@@ -116,7 +116,15 @@ c3_chart_internal_fn.showTooltip = function (selectedData, element) {
     var forArc = $$.hasArcType(),
         dataToShow = selectedData.filter(function (d) { return d && isValue(d.value); }),
         positionFunction = config.tooltip_position || c3_chart_internal_fn.tooltipPosition;
-    if (dataToShow.length === 0 || !config.tooltip_show) {
+
+    var showTooltip = true;
+    if (config.tooltip_show && (0, {}).toString.call(config.tooltip_show) === '[object Function]') {
+        showTooltip = config.tooltip_show(dataToShow);
+    } else {
+        showTooltip = config.tooltip_show;
+    }
+
+    if (dataToShow.length === 0 || !showTooltip) {
         return;
     }
     $$.tooltip.html(config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", "block");
